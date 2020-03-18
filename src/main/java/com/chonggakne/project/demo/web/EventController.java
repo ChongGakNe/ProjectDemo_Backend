@@ -25,34 +25,35 @@ public class EventController {
         this.eventRepository = eventRepository;
     }
 
-    @GetMapping("/events")
+    @GetMapping("/events")              // 조회
     Collection<Event> events() {
+        log.info("Request to create event: {}");
         return eventRepository.findAll();
     }
 
-    @GetMapping("/event/{id}")
+    @GetMapping("/event/{id}")          // 특정 조회
     ResponseEntity<?> getEvent(@PathVariable Long id) {
         Optional<Event> event = eventRepository.findById(id);
         return event.map(response -> ResponseEntity.ok().body(response))
                 .orElse(new ResponseEntity<>(HttpStatus.NOT_FOUND));
     }
 
-    @PostMapping("/event")
+    @PostMapping("/event")          // 추가
     ResponseEntity<Event> createEvent(@Valid @RequestBody Event event) throws URISyntaxException {
         log.info("Request to create event: {}", event);
         Event result = eventRepository.save(event);
-        return ResponseEntity.created(new URI("/api/group/" + result.getId()))
+        return ResponseEntity.created(new URI("/api/event/" + result.getId()))
                 .body(result);
     }
 
-    @PutMapping("/event")
+    @PutMapping("/event")           // 수정
     ResponseEntity<Event> updateEvent(@Valid @RequestBody Event event) {
         log.info("Request to update event: {}", event);
         Event result = eventRepository.save(event);
         return ResponseEntity.ok().body(result);
     }
 
-    @DeleteMapping("/event/{id}")
+    @DeleteMapping("/event/{id}")           // 삭제
     public ResponseEntity<?> deleteEvent(@PathVariable Long id) {
         log.info("Request to delete event: {}", id);
         eventRepository.deleteById(id);
